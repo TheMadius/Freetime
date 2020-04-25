@@ -5,12 +5,17 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+       server = new myserver();
+       server->startServer();
+
+       while(!server->waitForNewConnection(500));
+
        step = 40;
        sizeMaze = 20;
        this->resize(sizeMaze*step,sizeMaze*step + 30);
        this->setFixedSize(sizeMaze*step,sizeMaze*step + 30);
-        ui->setupUi(this);
-        ui->graphicsView->resize(sizeMaze*step,sizeMaze*step);
+       ui->setupUi(this);
+       ui->graphicsView->resize(sizeMaze*step,sizeMaze*step);
 
        scene   = new CustomScene();    // Инициализируем кастомизированную сцену
 
@@ -33,8 +38,10 @@ MainWindow::~MainWindow()
 void MainWindow::startGame()
 {
     srand(clock());
-    exit = 200 +rand()%(sizeMaze*(sizeMaze/2));
+    exit = sizeMaze*(sizeMaze/2) +rand()%(sizeMaze*(sizeMaze/2));
     int start = rand()%(sizeMaze*(sizeMaze/2));
+
+    server->socket->write(QString::number(start).toStdString().data());
 
     if(lab != nullptr)
         delete lab;
@@ -46,22 +53,11 @@ void MainWindow::startGame()
     lab = new Maze(sizeMaze,step,exit);
     lab->setPos(0,0);
 
-    cout << exit << endl;
-
     index = start;
     x = start%sizeMaze;
     y = start/sizeMaze;
 
-    lab->genWay(start,exit);
-
-    for(int i = 0 ; i < 15;++i)
-    {
-        int x1 = rand()%(sizeMaze*sizeMaze);
-        int x2 = rand()%(sizeMaze*sizeMaze);
-        lab->genWay(x1,x2);
-        x2 = rand()%(sizeMaze*sizeMaze);
-        lab->genWay(start,x2);
-    }
+    lab->genMaze(start);
 
     triangle = new Triangle();
     triangle->setPos( x*step + 20, y*step + 20);
@@ -76,6 +72,71 @@ void MainWindow::startGame()
 
 void MainWindow::slotGameTimer()
 {
+   if(!server->socket->waitForReadyRead(100))
+       return;
+
+    server->Data = server->socket->readAll();
+
+    int re = QString(server->Data.data()).toInt();
+
+    cout << re << endl;
+
+    switch (re) {
+    case 0:
+        if(lab->canIn(index,Up))
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+            triangle->setY(triangle->y() - step);
+            --y;
+            index-= sizeMaze;
+        }
+        else
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+        }
+        break;
+    case 1:
+        if(lab->canIn(index,Down))
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+            triangle->setY(triangle->y() + step);
+            ++y;
+            index+= sizeMaze;
+        }
+        else
+        {
+            server->socket->write(QString::number((int)lab->canIn(index,Up)).toStdString().data());
+        }
+        break;
+    case 2:
+        if(lab->canIn(index,Left))
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+            triangle->setX(triangle->x() - step);
+            --x;
+            index--;
+        }
+        else
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+        }
+        break;
+    case 3:
+        if(lab->canIn(index,Right))
+        {
+             server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+            triangle->setX(triangle->x() + step);
+             ++x;
+            index++;
+        }
+        else
+        {
+            server->socket->write(  QString::number((int)lab->canIn(index,Up)).toStdString().data());
+        }
+        break;
+    }
+
+/*
 
     if(GetAsyncKeyState('A'))
     { 
@@ -116,6 +177,7 @@ void MainWindow::slotGameTimer()
             index+= sizeMaze;
         }
      }
+     */
      if(index == this->exit)
      {
         startGame();

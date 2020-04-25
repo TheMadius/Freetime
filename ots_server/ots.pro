@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,6 +21,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     maze.cpp \
+    myserver.cpp \
     triangle.cpp \
     walls.cpp
 
@@ -27,6 +29,7 @@ HEADERS += \
     customscene.h \
     mainwindow.h \
     maze.h \
+    myserver.h \
     triangle.h \
     walls.h
 

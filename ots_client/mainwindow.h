@@ -9,6 +9,11 @@
 #include <triangle.h>
 #include <customscene.h>
 #include "maze.h"
+
+#include <QTcpSocket>
+#include <QMessageBox>
+#include <QDebug>
+
 using namespace std;
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +30,10 @@ public:
     void startGame();
     ~MainWindow();
 
+public slots:
+    void sockReady();
+    void sockDisc();
+
 private:
     Ui::MainWindow *ui;
     CustomScene *scene = nullptr;
@@ -37,5 +46,8 @@ private:
     int exit;
     int sizeMaze;
     QMetaObject::Connection Conn;
+
+    QTcpSocket* client;
+    QByteArray Data;
 };
 #endif // MAINWINDOW_H
