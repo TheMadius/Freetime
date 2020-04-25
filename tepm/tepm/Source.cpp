@@ -13,6 +13,10 @@ void client()
 	use_mem = (size_t *)cli.listen();
 
 	cout << (*use_mem) /(double)(1024*1024*1024);
+
+	use_mem = (size_t *)cli.listen();
+
+	cout << (*use_mem) /(double)(1024*1024*1024);
 }
 
 
@@ -41,6 +45,8 @@ int main()
 	Server ser("127.0.0.1", 1111);
 
 	size_t use_mem = theStatus.dwTotalPhys - theStatus.dwAvailPhys;
+
+	ser.speak((char*)&(use_mem),0);
 
 	ser.speak((char*)&(use_mem),0);
 
