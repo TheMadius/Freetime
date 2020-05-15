@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server(const char* ip, int port)
+Server::Server(int port)
 {
 	flag = true;
 
@@ -12,7 +12,7 @@ Server::Server(const char* ip, int port)
 		throw new std::exception("Error, loading dll");
 	}
 
-	this->addr.sin_addr.S_un.S_addr = inet_addr(ip);
+	this->addr.sin_addr.S_un.S_addr = INADDR_ANY;
 	this->addr.sin_port = htons(port);
 	this->addr.sin_family = AF_INET;
 	int size = sizeof(addr);
@@ -22,28 +22,17 @@ Server::Server(const char* ip, int port)
 	bind(server, (SOCKADDR*)&addr,sizeof(addr));
 
 	listen(server,SOMAXCONN);
-	
-	thread wait([&]() {
-		wait_Client();
-		});
 
-	wait.detach();
 }
 
-void Server::speak(const char* msg, int index)
+void Server::speak(const char* msg)
 {
 	int size = sizeof(msg);
 
-	unique_lock<mutex> loc(m2);
-	this->Cv.wait(loc, [&]() {return ((index + 1) <= this->getCount()); });
+	send(clients,(char*)&size,sizeof(size),NULL);
 
-	m.lock();
+	send(clients, msg,sizeof(msg),NULL);
 
-	send(clients[index],(char*)&size,sizeof(size),NULL);
-
-	send(clients[index], msg,sizeof(msg),NULL);
-
-	m.unlock();
 }
 
 char* Server::listenClient(int index)
@@ -51,19 +40,11 @@ char* Server::listenClient(int index)
 	char* msg;
 	int size;
 
-	unique_lock<mutex> loc(m2);
-	cout << "lo2";
-	this->Cv.wait(loc, [&]() {return ((index + 1) <= this->getCount()); });
-
-	m.lock();
-	recv(clients[index], (char *)&size, sizeof(size), NULL);
-	m.unlock();
+	recv(clients, (char *)&size, sizeof(size), NULL);
 
 	msg = new char[size + 1];
 
-	m.lock();
-	recv(clients[index], msg, size, NULL);
-	m.unlock();
+	recv(clients, msg, size, NULL);
 
 	msg[size] = '\0';
 	
@@ -80,20 +61,10 @@ void Server::wait_Client()
 
 		if (client == 0)
 		{
-		cout << "lo";
 			continue;
 		}
-
-		m.lock();
-		clients.push_back(client);
-		Cv.notify_one();
-		m.unlock();
-
+		clients = client;
+		break;
 	}
-}
-
-int Server::getCount()
-{
-	return this->clients.size();
 }
 

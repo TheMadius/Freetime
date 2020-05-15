@@ -1,6 +1,4 @@
-﻿  Client.cpp
-  Server.cpp
-C:\Users\Madius\source\repos\Freetime\tepm\tepm\Server.cpp(97,29): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+﻿  Server.cpp
   Source.cpp
   Создание кода...
   tepm.vcxproj -> C:\Users\Madius\source\repos\Freetime\tepm\x64\Debug\tepm.exe

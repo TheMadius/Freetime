@@ -14,23 +14,7 @@ void client()
 
 	cout << (*use_mem) /(double)(1024*1024*1024);
 
-	use_mem = (size_t *)cli.listen();
-
-	cout << (*use_mem) /(double)(1024*1024*1024);
 }
-
-
-void client2()
-{
-	Client cli("127.0.0.1", 1111);
-
-	size_t* use_mem;
-
-	use_mem = (size_t*)cli.listen();
-
-	cout << (*use_mem) / (double)(1024 * 1024 * 1024) << "Gb";
-}
-
 
 int main()
 {
@@ -40,19 +24,15 @@ int main()
 	GlobalMemoryStatus(&theStatus);
 
 	thread t(client);
-	thread t2(client2);
 
-	Server ser("127.0.0.1", 1111);
+	Server ser(1111);
+
+	ser.wait_Client();
 
 	size_t use_mem = theStatus.dwTotalPhys - theStatus.dwAvailPhys;
 
-	ser.speak((char*)&(use_mem),0);
-
-	ser.speak((char*)&(use_mem),0);
-
-	ser.speak((char*)&(use_mem),1);
+	ser.speak((char*)&(use_mem));
 
 	t.join();
-	t2.join();
 }
 
