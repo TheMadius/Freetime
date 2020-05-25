@@ -1,4 +1,5 @@
 #include <iostream>
+#include <locale.h>
 #include "Server.h"
 #include "Client.h"
 
@@ -12,12 +13,13 @@ void client()
 
 	use_mem = (size_t *)cli.listen();
 
-	cout << (*use_mem) /(double)(1024*1024*1024);
+	cout << "Занято оперативной памяти : "<< (*use_mem)/(double)(1024*1024*1024) << " Gb";
 
 }
 
 int main()
 {
+	setlocale(LC_ALL, "ru");
 	MEMORYSTATUS theStatus;
 	ZeroMemory(&theStatus, sizeof(theStatus));
 	theStatus.dwLength = sizeof(theStatus);
