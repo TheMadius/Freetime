@@ -16,7 +16,7 @@ class Server
 public :
 	Server(int port);
 	void speak(const char* msg);
-	char* listenClient(int index);
+	char* listenClient();
 	void wait_Client();
 
 private:

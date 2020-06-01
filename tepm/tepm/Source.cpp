@@ -5,36 +5,37 @@
 
 using namespace std;
 
-void client()
-{
-	Client cli("127.0.0.1", 1111);
-	
-	size_t* use_mem;
-
-	use_mem = (size_t *)cli.listen();
-
-	cout << "Занято оперативной памяти : "<< (*use_mem)/(double)(1024*1024*1024) << " Gb";
-
-}
-
 int main()
 {
 	setlocale(LC_ALL, "ru");
-	MEMORYSTATUS theStatus;
-	ZeroMemory(&theStatus, sizeof(theStatus));
-	theStatus.dwLength = sizeof(theStatus);
-	GlobalMemoryStatus(&theStatus);
-
-	thread t(client);
 
 	Server ser(1111);
-
 	ser.wait_Client();
 
-	size_t use_mem = theStatus.dwTotalPhys - theStatus.dwAvailPhys;
+	while (true)
+	{
+		int* msg;
+		msg = (int*)ser.listenClient();
 
-	ser.speak((char*)&(use_mem));
-
-	t.join();
+		switch (*msg)
+		{
+		case 1:
+		{
+			MEMORYSTATUS theStatus;
+			ZeroMemory(&theStatus, sizeof(theStatus));
+			theStatus.dwLength = sizeof(theStatus);
+			GlobalMemoryStatus(&theStatus);
+			size_t use_mem = theStatus.dwTotalPhys - theStatus.dwAvailPhys;
+			ser.speak((char*)&(use_mem));
+			break;
+		}
+		case 2:
+			exit(1);
+			break;
+		default:
+			exit(1);
+			break;
+		}
+	}
 }
 

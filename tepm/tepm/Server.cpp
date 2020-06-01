@@ -35,7 +35,7 @@ void Server::speak(const char* msg)
 
 }
 
-char* Server::listenClient(int index)
+char* Server::listenClient()
 {
 	char* msg;
 	int size;
