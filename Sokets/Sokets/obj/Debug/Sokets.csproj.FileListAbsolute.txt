@@ -1,0 +1,10 @@
+C:\Users\Madius\source\repos\Sokets\Sokets\bin\Debug\Sokets.exe.config
+C:\Users\Madius\source\repos\Sokets\Sokets\bin\Debug\Sokets.exe
+C:\Users\Madius\source\repos\Sokets\Sokets\bin\Debug\Sokets.pdb
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.csprojAssemblyReference.cache
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.Form1.resources
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.Properties.Resources.resources
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.csproj.GenerateResource.cache
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.csproj.CoreCompileInputs.cache
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.exe
+C:\Users\Madius\source\repos\Sokets\Sokets\obj\Debug\Sokets.pdb
